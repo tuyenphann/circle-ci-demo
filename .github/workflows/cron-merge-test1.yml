@@ -12,7 +12,6 @@ env:
 
   REPO: https://tuyenphann:${{secrets.GITHUB_TOKEN}}@github.com/tuyenphann/circle-ci-demo.git
   REPO_NAME: circle-ci-demo
-  ORIGIN: https://github.com/tuyenphann/circle-ci-demo.git
 
   CURRENT_BRANCH: local/test1
   MAIN_BRANCH: main
@@ -40,7 +39,7 @@ jobs:
         git config user.email "${{env.GIT_EMAIL}}"
 
         echo "🔥 Pulling from ${{env.MAIN_BRANCH}}"
-        git pull ${{env.ORIGIN}} ${{env.MAIN_BRANCH}}
+        git pull origin ${{env.MAIN_BRANCH}}
         PULL_CMD_STATUS=$?
 
         if [ ! $PULL_CMD_STATUS -eq 0 ]
@@ -51,7 +50,7 @@ jobs:
         echo ""
         
         echo "🔥 Pulling from ${{env.TEST2_BRANCH}}"
-        git pull ${{env.ORIGIN}} ${{env.TEST2_BRANCH}}
+        git pull origin ${{env.TEST2_BRANCH}}
         PULL_CMD_STATUS=$?
 
         if [ ! $PULL_CMD_STATUS -eq 0 ]
