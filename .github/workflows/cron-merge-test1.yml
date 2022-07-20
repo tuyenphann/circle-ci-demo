@@ -54,13 +54,13 @@ jobs:
           echo ""
         done
 
-        echo "🔥 Pushing to ${{CURRENT_BRANCH}}"
+        echo "🔥 Pushing to ${{env.CURRENT_BRANCH}}"
         git push
         PUSH_CMD_STATUS=$?
 
         if [ ! $PUSH_CMD_STATUS -eq 0 ]
           then
-            echo "⛔️ Error detected while pushing to ${{CURRENT_BRANCH}}. Aborting."
+            echo "⛔️ Error detected while pushing to ${{env.CURRENT_BRANCH}}. Aborting."
             exit 1
           fi
           echo ""
