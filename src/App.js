@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
-import firebaseConfig from './variables/firebase-config.';
+import firebaseConfig from './variables/firebase-config';
 import globalConfig from './variables/global-config';
 
 function App() {
