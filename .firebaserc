@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "circle-ci-demo-8bb76"
+  },
+  "targets": {
+    "circle-ci-demo-8bb76": {
+      "hosting": {
+        "test1": [
+          "circle-ci-demo-test1"
+        ],
+        "test2": [
+          "circle-ci-demo-test2"
+        ]
+      }
+    }
   }
 }
