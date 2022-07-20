@@ -21,7 +21,7 @@ commands:
           command: npm install
       - run:
           name: Configure environment
-          command: cp -a ./envs/<< parameters.env >>/. ./src/variables
+          command: cp -a ./envs/<< parameters.env >>/. ./src/variables/
       - run:
           name: List directories
           command: ls
