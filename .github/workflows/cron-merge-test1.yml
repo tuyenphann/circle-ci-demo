@@ -37,8 +37,8 @@ jobs:
         echo ""
 
         cd ${{env.REPO_NAME}}
-        git config user.name "${{GIT_USERNAME}}"
-        git config user.email "${{GIT_EMAIL}}"
+        git config user.name "${{env.GIT_USERNAME}}"
+        git config user.email "${{env.GIT_EMAIL}}"
 
         for BRANCH in ${{env.BRANCHES}}
         do
