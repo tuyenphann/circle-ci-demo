@@ -21,13 +21,10 @@ commands:
           command: npm install
       - run:
           name: Configure environment
-          command: 
-                  if cp -a ./envs/<< parameters.env >>/. ./src/variables
-                  then
-                    echo "Success"
-                  else
-                    echo "Failure, exit status $?"
-                  fi
+          command: cp -a ./envs/<< parameters.env >>/. ./src/variables
+      - run:
+          name: List directories
+          command: ls
       - run:
           name: Build
           command: npm run build
