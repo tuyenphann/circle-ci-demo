@@ -35,8 +35,10 @@ jobs:
         echo ""
 
         cd ${{env.REPO_NAME}}
+        echo "🔥 Configuring Git"
         git config user.name "${{env.GIT_USERNAME}}"
         git config user.email "${{env.GIT_EMAIL}}"
+        git config pull.rebase false
 
         echo "🔥 Pulling from ${{env.MAIN_BRANCH}}"
         git pull origin ${{env.MAIN_BRANCH}}
