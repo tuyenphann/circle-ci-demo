@@ -18,7 +18,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn more!
+          Learn GitHub Actions more!
         </a>
         <br />
         <div>test1 env</div>
