@@ -1,4 +1,4 @@
-name: Trigger merge test1 on a CRON schedule
+name: CRON merge test1
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ env:
 
   CURRENT_BRANCH: local/test1
   MAIN_BRANCH: main
-  TEST2_BRANCH: test2
+  TEST2_BRANCH: local/test2
 
 jobs:
   merge:
