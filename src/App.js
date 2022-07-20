@@ -1,6 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 
+import firebaseConfig from './variables/firebase-config.';
+import globalConfig from './variables/global-config';
+
 function App() {
   return (
     <div className="App">
@@ -17,6 +20,9 @@ function App() {
         >
           Learn React
         </a>
+        <br />
+        <div>projectId: {firebaseConfig.projectId}</div>
+        <div>apiBaseUrl: {globalConfig.apiBaseUrl}</div>
       </header>
     </div>
   );
