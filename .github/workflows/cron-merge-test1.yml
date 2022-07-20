@@ -15,9 +15,8 @@ env:
   ORIGIN: https://github.com/tuyenphann/circle-ci-demo.git
 
   CURRENT_BRANCH: local/test1
-  BRANCHES: |
-    - main
-    - test2
+  MAIN_BRANCH: main
+  TEST2_BRANCH: test2
 
 jobs:
   merge:
@@ -40,19 +39,27 @@ jobs:
         git config user.name "${{env.GIT_USERNAME}}"
         git config user.email "${{env.GIT_EMAIL}}"
 
-        for BRANCH in ${{env.BRANCHES}}
-        do
-          echo "🔥 Pulling from $BRANCH"
-          git pull ${{env.ORIGIN}} $BRANCH
-          PULL_CMD_STATUS=$?
+        echo "🔥 Pulling from ${{env.MAIN_BRANCH}}"
+        git pull ${{env.ORIGIN}} ${{env.MAIN_BRANCH}}
+        PULL_CMD_STATUS=$?
 
-          if [ ! $PULL_CMD_STATUS -eq 0 ]
-          then
-            echo "⛔️ Error detected while pulling from $BRANCH. Aborting."
-            exit 1
-          fi
-          echo ""
-        done
+        if [ ! $PULL_CMD_STATUS -eq 0 ]
+        then
+          echo "⛔️ Error detected while pulling from ${{env.MAIN_BRANCH}}. Aborting."
+          exit 1
+        fi
+        echo ""
+        
+        echo "🔥 Pulling from ${{env.TEST2_BRANCH}}"
+        git pull ${{env.ORIGIN}} ${{env.TEST2_BRANCH}}
+        PULL_CMD_STATUS=$?
+
+        if [ ! $PULL_CMD_STATUS -eq 0 ]
+        then
+          echo "⛔️ Error detected while pulling from ${{env.TEST2_BRANCH}}. Aborting."
+          exit 1
+        fi
+        echo ""
 
         echo "🔥 Pushing to ${{env.CURRENT_BRANCH}}"
         git push
