@@ -37,6 +37,11 @@ commands:
               echo "Need to push to ${{<< parameters.source-branch >>}}"
               exit 0
             else
+              echo "🔥 Configuring Git"
+              git config user.name "${{env.GIT_USERNAME}}"
+              git config user.email "${{env.GIT_EMAIL}}"
+              git config pull.rebase false
+
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull origin << parameters.source-branch >>
               PULL_CMD_STATUS=$?
