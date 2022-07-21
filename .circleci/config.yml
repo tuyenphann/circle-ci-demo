@@ -137,7 +137,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":red_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is failed"
+                    "text": ":x: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of _$CIRCLE_PROJECT_REPONAME_ is failed"
                   }
                 }
               ],
@@ -149,7 +149,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\nDeployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job _$CIRCLE_JOB_ is triggered by _$CIRCLE_PROJECT_USERNAME_\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -166,7 +166,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                    "text": ":white_check_mark: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of _$CIRCLE_PROJECT_REPONAME_ is successfully"
                   }
                 }
               ],
@@ -178,7 +178,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\nDeployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job _$CIRCLE_JOB_ is triggered by _$CIRCLE_PROJECT_USERNAME_\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     },
                     {
