@@ -26,9 +26,6 @@ commands:
         default: main
     steps:
       - run:
-          name: Update remote
-          command: git remote update
-      - run:
           name: Compare and pull changes
           command: |
             UPSTREAM=origin/<< parameters.source-branch >>
@@ -81,7 +78,7 @@ commands:
             git config pull.rebase false
 
             echo "🔥 Pushing to << parameters.target-branch >>"
-            git push origin << parameters.target-branch >>
+            git push
 
             cat changes.txt
   build-and-deploy:
