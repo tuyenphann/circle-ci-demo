@@ -1,0 +1,55 @@
+{
+    "fail": {
+        "attachments": [
+            {
+                "color": "#FC100D",
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is failed"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pass": {
+        "attachments": [
+            {
+                "color": "#4BB543",
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Changes:\n*${CHANGES}*"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
