@@ -33,9 +33,9 @@ commands:
             if [ $LOCAL = $REMOTE ]; then
                 echo "Up-to-date"
             elif [ $LOCAL = $BASE ]; then
-                echo "Need to pull from ${{<< parameters.source-branch >>}}"
+                echo "Need to pull from << parameters.source-branch >>"
             elif [ $REMOTE = $BASE ]; then
-                echo "Need to push to ${{<< parameters.source-branch >>}}"
+                echo "Need to push to << parameters.source-branch >>"
             else
                 echo "Diverged"
             fi
