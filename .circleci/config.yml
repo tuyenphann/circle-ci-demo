@@ -35,6 +35,7 @@ jobs:
         enum: [test1, test2]
         default: test1
     steps:
+      - checkout
       - run:
           name: Install Firebase Tools
           command: npm install --prefix=$HOME/.local --global firebase-tools
