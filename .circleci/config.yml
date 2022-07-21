@@ -97,6 +97,10 @@ jobs:
     executor: node14
     description: "Deploy project"
     parameters:
+      git-username:
+        type: string
+      git-email:
+        type: string
       env:
         type: enum
         enum: [test1, test2]
@@ -115,6 +119,8 @@ jobs:
           target-branch: << parameters.target-branch >>
           source-branch: << parameters.source-branch >>
       - build-and-deploy:
+          git-username: << parameters.git-username >>
+          git-email: << parameters.git-email >>
           env: << parameters.env >>
 
 workflows:
@@ -133,6 +139,8 @@ workflows:
   deploy-test2:
     jobs:
       - deploy:
+          git-username: tuyenphann
+          git-email: tuyenphann@kms-technology.com
           env: test2
           target-branch: local/test2
           source-branch: main
