@@ -57,10 +57,10 @@ commands:
 
               if [[ -z "${CHANGES}" ]]
               then
-                echo 'export CHANGES="   •   `<< parameters.source-branch >>`"' >> $BASH_ENV
+                echo 'export CHANGES="    🔥   << parameters.source-branch >>"' >> $BASH_ENV
                 exit 0
               else
-                echo 'export CHANGES="${CHANGES}\n   •   `<< parameters.source-branch >>`"' >> $BASH_ENV
+                echo 'export CHANGES="${CHANGES}\n    🔥   << parameters.source-branch >>"' >> $BASH_ENV
               fi
             fi
   push:
@@ -149,7 +149,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\n:tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -178,14 +178,14 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\n:tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":page_with_curl: Changes:\n${CHANGES}"
+                        "text": "Changes:\n*${CHANGES}*"
                       }
                     }
                   ]
