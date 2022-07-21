@@ -104,7 +104,7 @@ workflows:
                 - local/test1
   deploy-test2:
     jobs:
-      - build-and-deploy:
+      - deploy:
           env: test2
           target-branch: local/test2
           source-branch: main
