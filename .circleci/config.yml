@@ -4,7 +4,7 @@ executors:
   node14:
     docker:
       - image: circleci/node:14
-    working_directory: ~/gh
+    working_directory: ~/project
 
 jobs:
   build:
