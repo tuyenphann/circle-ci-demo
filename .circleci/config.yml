@@ -23,22 +23,19 @@ commands:
           name: Update remote
           command: git remote update
       - run:
-          name: Compare
+          name: Compare source branch and target branch
           command: |
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse "$UPSTREAM")
             BASE=$(git merge-base @ "$UPSTREAM")
 
-            if [ $LOCAL = $REMOTE ]
-            then
+            if [ $LOCAL = $REMOTE ]; then
                 echo "Up-to-date"
-            elif [ $REMOTE = $BASE ]
-            then
-                echo "Need to push"
-            elif [ $LOCAL = $BASE ]
-            then
-                echo "Need to pull"
+            elif [ $LOCAL = $BASE ]; then
+                echo "Need to pull from ${{<< parameters.source-branch >>}}"
+            elif [ $REMOTE = $BASE ]; then
+                echo "Need to push to ${{<< parameters.source-branch >>}}"
             else
                 echo "Diverged"
             fi
