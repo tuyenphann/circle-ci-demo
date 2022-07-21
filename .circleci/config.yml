@@ -126,16 +126,64 @@ commands:
   notify-slack:
     description: "Notify Slack"
     steps:
-      - run:
-          command: |
-            echo 'export SLACK_SUCCESS_TEMPLATE=$(jq .pass .circleci/slack-success-template.json)' >> $BASH_ENV
-            echo 'export SLACK_FAIL_TEMPLATE=$(jq .fail .circleci/slack-fail-template.json)' >> $BASH_ENV
-      - slack/notify:
-          event: pass
-          template: ${SLACK_SUCCESS_TEMPLATE}
       - slack/notify:
           event: fail
-          template: ${SLACK_FAIL_TEMPLATE}
+          custom: |
+            {
+              "attachments": [
+                {
+                  "color": "#FC100D",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is failed"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          template: ${SLACK_SUCCESS_TEMPLATE}
+      - slack/notify:
+          event: pass
+          custom: |
+            "attachments": [
+              {
+                "color": "#4BB543",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Changes:\n*${CHANGES}*"
+                    }
+                  }
+                ]
+              }
+            ]
 
 jobs:
   merge-and-deploy-test1:
