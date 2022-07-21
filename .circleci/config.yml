@@ -50,7 +50,7 @@ commands:
               git pull --no-edit origin << parameters.source-branch >>
               
               echo "🔥 Pushing to << parameters.target-branch >>"
-              git push
+              git push origin << parameters.target-branch >>
             fi
   build-and-deploy:
     description: "Build and deploy project"
