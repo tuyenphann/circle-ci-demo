@@ -57,10 +57,10 @@ commands:
 
               if [[ -z "${CHANGES}" ]]
               then
-                echo 'export CHANGES="  •  << parameters.source-branch >>"' >> $BASH_ENV
+                echo 'export CHANGES="   •   `<< parameters.source-branch >>`"' >> $BASH_ENV
                 exit 0
               else
-                echo 'export CHANGES="${CHANGES}\n  •  << parameters.source-branch >>"' >> $BASH_ENV
+                echo 'export CHANGES="${CHANGES}\n   •   `<< parameters.source-branch >>`"' >> $BASH_ENV
               fi
             fi
   push:
@@ -185,7 +185,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":page_with_curl: Changes:\n*${CHANGES}*"
+                        "text": ":page_with_curl: Changes:\n${CHANGES}"
                       }
                     }
                   ]
