@@ -10,6 +10,10 @@ commands:
   compare-branches:
     description: "Compare source branch and target branch"
     parameters:
+      git-username:
+        type: string
+      git-email:
+        type: string
       target-branch:
         type: enum
         enum: [local/test1, local/test2]
@@ -38,8 +42,8 @@ commands:
               exit 0
             else
               echo "🔥 Configuring Git"
-              git config user.name "${{env.GIT_USERNAME}}"
-              git config user.email "${{env.GIT_EMAIL}}"
+              git config user.name "<< parameters.git-username >>"
+              git config user.email "<< parameters.git-email >>"
               git config pull.rebase false
 
               echo "🔥 Pulling from << parameters.source-branch >>"
@@ -117,6 +121,8 @@ workflows:
   deploy-test1:
     jobs:
       - deploy:
+          git-username: tuyenphann
+          git-email: tuyenphann@kms-technology.com
           env: test1
           target-branch: local/test1
           source-branch: main
