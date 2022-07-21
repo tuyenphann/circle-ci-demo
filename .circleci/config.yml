@@ -131,9 +131,11 @@ commands:
             echo 'export SLACK_SUCCESS_TEMPLATE=$(jq .pass ./slack-success-template.json)' >> $BASH_ENV
             echo 'export SLACK_FAIL_TEMPLATE=$(jq .fail ./slack-fail-template.json)' >> $BASH_ENV
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: SLACK_SUCCESS_TEMPLATE
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: SLACK_FAIL_TEMPLATE
 
@@ -150,8 +152,7 @@ jobs:
           target-branch: local/test1
       - build-and-deploy:
           env: test1
-      - notify-slack:
-          context: slack-secrets
+      - notify-slack
             
   merge-and-deploy-test2:
     executor: node14
@@ -168,8 +169,7 @@ jobs:
           target-branch: local/test2
       - build-and-deploy:
           env: test2
-      - notify-slack:
-          context: slack-secrets
+      - notify-slack
 
 workflows:
   deploy-test1:
