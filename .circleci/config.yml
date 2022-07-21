@@ -6,7 +6,63 @@ executors:
       - image: circleci/node:14
     working_directory: ~/project
 
+commands:
+  compare-branches:
+    description: "Compare source branch and target branch"
+    parameters:
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
+    steps:
+      - checkout
+      - run:
+          name: Update remote
+          command: git remote update
+      - run:
+          name: Compare
+          command:
+            UPSTREAM=origin/<< parameters.source-branch >>
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse "$UPSTREAM")
+            BASE=$(git merge-base @ "$UPSTREAM")
+
+            if [ $LOCAL = $REMOTE ]; then
+                echo "Up-to-date"
+            elif [ $REMOTE = $BASE ]; then
+                echo "Need to push"
+            elif [ $LOCAL = $BASE ]; then
+                echo "Need to pull"
+            else
+                echo "Diverged"
+            fi
+
 jobs:
+  merge:
+    executor: node14
+    description: "Merge code"
+    parameters:
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
+    steps:
+    - checkout
+    - run:
+        name: Update remote
+        command: git remote update
+    - compare-branches:
+        target-branch: << parameters.target-branch >>
+        source-branch: << parameters.source-branch >>
+
   build-and-deploy:
     executor: node14
     description: "Deploy project"
@@ -36,6 +92,13 @@ jobs:
 workflows:
   build-and-deploy-test1:
     jobs:
+      - merge:
+          target-branch: local/test1
+          source-branch: main
+          filters:
+            branches:
+              only:
+                - local/test1
       - build-and-deploy:
           env: test1
           filters:
