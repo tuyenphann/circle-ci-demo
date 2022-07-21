@@ -38,6 +38,7 @@ commands:
             
             echo "🔥 Checking out to << parameters.target-branch >>"
             git checkout << parameters.target-branch >>
+            echo 'export DEPLOYED_BRANCH="- << parameters.target-branch >>"' >> $BASH_ENV
 
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
@@ -137,15 +138,22 @@ commands:
                     {
                       "type": "section",
                       "text": {
-                          "type": "mrkdwn",
-                          "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is failed"
+                        "type": "mrkdwn",
+                        "text": ":red_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is failed"
                       }
                     },
                     {
                       "type": "section",
                       "text": {
-                          "type": "mrkdwn",
-                          "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                        "type": "mrkdwn",
+                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -163,22 +171,29 @@ commands:
                   {
                     "type": "section",
                     "text": {
-                        "type": "mrkdwn",
-                        "text": ":fire: Build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL) of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                      "type": "mrkdwn",
+                      "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
                     }
                   },
                   {
                     "type": "section",
                     "text": {
-                        "type": "mrkdwn",
-                        "text": "Deployed branch: `$CIRCLE_BRANCH`"
+                      "type": "mrkdwn",
+                      "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
                     }
                   },
                   {
                     "type": "section",
                     "text": {
-                        "type": "mrkdwn",
-                        "text": "Changes:\n*${CHANGES}*"
+                      "type": "mrkdwn",
+                      "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": ":pages-with-curl: Changes:\n*${CHANGES}*"
                     }
                   }
                 ]
