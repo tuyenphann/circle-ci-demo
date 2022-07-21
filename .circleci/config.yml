@@ -129,8 +129,8 @@ commands:
       - run:
           command: |
             ls
-            echo 'export SLACK_SUCCESS_TEMPLATE=$(jq .pass .circleci/slack-success-template.json)' >> $BASH_ENV
-            echo 'export SLACK_FAIL_TEMPLATE=$(jq .fail .circleci/slack-fail-template.json)' >> $BASH_ENV
+            echo 'export SLACK_SUCCESS_TEMPLATE=$(jq . .circleci/slack-success-template.json)' >> $BASH_ENV
+            echo 'export SLACK_FAIL_TEMPLATE=$(jq . .circleci/slack-fail-template.json)' >> $BASH_ENV
       - slack/notify:
           event: pass
           template: ${SLACK_SUCCESS_TEMPLATE}
