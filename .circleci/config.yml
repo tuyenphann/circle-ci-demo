@@ -4,19 +4,49 @@ executors:
   node14:
     docker:
       - image: circleci/node:14
-    working_directory: ~/gh
+    working_directory: ~/project
 
-jobs:
-  build:
-    executor: node14
-    description: "Build project"
+commands:
+  compare-branches:
+    description: "Compare source branch and target branch"
+    parameters:
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
+    steps:
+      - run:
+          name: Update remote
+          command: git remote update
+      - run:
+          name: Compare source branch and target branch
+          command: |
+            UPSTREAM=origin/<< parameters.source-branch >>
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse "$UPSTREAM")
+            BASE=$(git merge-base @ "$UPSTREAM")
+
+            if [ $LOCAL = $REMOTE ]; then
+                echo "Up-to-date"
+            elif [ $LOCAL = $BASE ]; then
+                echo "Need to pull from ${{<< parameters.source-branch >>}}"
+            elif [ $REMOTE = $BASE ]; then
+                echo "Need to push to ${{<< parameters.source-branch >>}}"
+            else
+                echo "Diverged"
+            fi
+  build-and-deploy:
+    description: "Build and deploy project"
     parameters:
       env:
         type: enum
         enum: [test1, test2]
         default: test1
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: npm install
@@ -26,6 +56,14 @@ jobs:
       - run:
           name: Build project
           command: npm run build
+      - run:
+          name: Install Firebase Tools
+          command: npm install --prefix=$HOME/.local --global firebase-tools
+      - run:
+          name: Deploy to Firebase
+          command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
+
+jobs:
   deploy:
     executor: node14
     description: "Deploy project"
@@ -34,39 +72,39 @@ jobs:
         type: enum
         enum: [test1, test2]
         default: test1
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
     steps:
-      - run:
-          name: Install Firebase Tools
-          command: npm install --prefix=$HOME/.local --global firebase-tools
-      - run:
-          name: Deploy to Firebase
-          command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
+      - checkout
+      - compare-branches:
+          target-branch: << parameters.target-branch >>
+          source-branch: << parameters.source-branch >>
+      - build-and-deploy:
+          env: << parameters.env >>
 
 workflows:
   deploy-test1:
     jobs:
-      - build:
-          env: test1
-          filters:
-            branches:
-              only:
-                - local/test1
       - deploy:
           env: test1
+          target-branch: local/test1
+          source-branch: main
           filters:
             branches:
               only:
                 - local/test1
   deploy-test2:
     jobs:
-      - build:
-          env: test2
-          filters:
-            branches:
-              only:
-                - local/test2
       - deploy:
           env: test2
+          target-branch: local/test2
+          source-branch: main
           filters:
             branches:
               only:
