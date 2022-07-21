@@ -7,13 +7,15 @@ executors:
     working_directory: ~/project
 
 commands:
-  compare-branches:
-    description: "Compare source branch and target branch"
+  merge:
+    description: "Compare and pull changes"
     parameters:
       git-username:
         type: string
+        default: tuyenphann
       git-email:
         type: string
+        default: tuyenphan@kms-technology.com
       target-branch:
         type: enum
         enum: [local/test1, local/test2]
@@ -27,7 +29,7 @@ commands:
           name: Update remote
           command: git remote update
       - run:
-          name: Compare source branch and target branch
+          name: Compare and pull changes
           command: |
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
@@ -35,10 +37,10 @@ commands:
             BASE=$(git merge-base @ "$UPSTREAM")
 
             if [ $LOCAL = $REMOTE ]; then
-              echo "<< parameters.target-branch >> branch is up-to-date as compared with << parameters.source-branch >> branch"
+              echo "🔥 << parameters.target-branch >> branch is up-to-date as compared with << parameters.source-branch >> branch"
               exit 0
             elif [ $REMOTE = $BASE ]; then
-              echo "<< parameters.target-branch >> branch is ahead << parameters.source-branch >> branch"
+              echo "🔥 << parameters.target-branch >> branch is ahead of << parameters.source-branch >> branch"
               exit 0
             else
               echo "🔥 Configuring Git"
@@ -47,11 +49,25 @@ commands:
               git config pull.rebase false
 
               echo "🔥 Pulling from << parameters.source-branch >>"
-              git pull origin << parameters.source-branch >>
-              
-              echo "🔥 Pushing to << parameters.target-branch >>"
-              git push
+              git pull --no-edit origin << parameters.source-branch >>
             fi
+  push:
+    description: "Push changes"
+    parameters:
+      git-username:
+        type: string
+        default: tuyenphann
+      git-email:
+        type: string
+        default: tuyenphan@kms-technology.com
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+    steps:
+      - run:
+          name: Push changes
+          command: git push origin << parameters.target-branch >>
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
@@ -77,58 +93,46 @@ commands:
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
 jobs:
-  deploy:
+  merge-and-deploy-test1:
     executor: node14
-    description: "Deploy project"
-    parameters:
-      git-username:
-        type: string
-      git-email:
-        type: string
-      env:
-        type: enum
-        enum: [test1, test2]
-        default: test1
-      target-branch:
-        type: enum
-        enum: [local/test1, local/test2]
-        default: local/test1
-      source-branch:
-        type: enum
-        enum: [main, local/test1, local/test2]
-        default: main
+    description: "Merge and deploy test1"
     steps:
       - checkout
-      - compare-branches:
-          git-username: << parameters.git-username >>
-          git-email: << parameters.git-email >>
-          target-branch: << parameters.target-branch >>
-          source-branch: << parameters.source-branch >>
+      - merge:
+          target-branch: local/test1
+          source-branch: main
+      - push:
+          target-branch: local/test1
       - build-and-deploy:
-          env: << parameters.env >>
+          env: test1
+  merge-and-deploy-test2:
+    executor: node14
+    description: "Merge test2"
+    steps:
+      - checkout
+      - merge:
+          target-branch: local/test2
+          source-branch: main
+      - merge:
+          target-branch: local/test2
+          source-branch: local/test1
+      - push:
+          target-branch: local/test2
+      - build-and-deploy:
+          env: test2
 
 workflows:
   deploy-test1:
     jobs:
-      - deploy:
-          git-username: tuyenphann
-          git-email: tuyenphann@kms-technology.com
-          env: test1
-          target-branch: local/test1
-          source-branch: main
+      - merge-and-deploy-test1:
           filters:
             branches:
               only:
-                - local/test1
+                - main
   deploy-test2:
     jobs:
-      - deploy:
-          git-username: tuyenphann
-          git-email: tuyenphann@kms-technology.com
-          env: test2
-          target-branch: local/test2
-          source-branch: main
+      - merge-and-deploy-test2:
           filters:
             branches:
               only:
-                - local/test2
+                - main
