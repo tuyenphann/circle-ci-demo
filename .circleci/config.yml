@@ -131,11 +131,13 @@ commands:
             echo 'export SLACK_SUCCESS_TEMPLATE=$(jq .pass ./slack-success-template.json)' >> $BASH_ENV
             echo 'export SLACK_FAIL_TEMPLATE=$(jq .fail ./slack-fail-template.json)' >> $BASH_ENV
       - slack/notify:
+          channel: C03Q75BH3TQ
           event: pass
-          template: SLACK_SUCCESS_TEMPLATE
+          template: ${SLACK_SUCCESS_TEMPLATE}
       - slack/notify:
+          channel: C03Q75BH3TQ
           event: fail
-          template: SLACK_FAIL_TEMPLATE
+          template: ${SLACK_FAIL_TEMPLATE}
 
 jobs:
   merge-and-deploy-test1:
