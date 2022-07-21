@@ -18,7 +18,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React more!!!!!!!?
+          Learn React more!!!!!!!??
         </a>
         <br />
         <div>projectId: {firebaseConfig.projectId}</div>
