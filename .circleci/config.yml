@@ -57,10 +57,10 @@ commands:
 
               if [[ -z "${CHANGES}" ]]
               then
-                echo 'export CHANGES="• << parameters.source-branch >>"' >> $BASH_ENV
+                echo 'export CHANGES="  •  << parameters.source-branch >>"' >> $BASH_ENV
                 exit 0
               else
-                echo 'export CHANGES="${CHANGES}\n• << parameters.source-branch >>"' >> $BASH_ENV
+                echo 'export CHANGES="${CHANGES}\n  •  << parameters.source-branch >>"' >> $BASH_ENV
               fi
             fi
   push:
@@ -83,7 +83,7 @@ commands:
             if [[ -z "${CHANGES}" ]]
             then
               echo "🔥 No changes"
-              echo 'export CHANGES="• No changes"' >> $BASH_ENV
+              echo 'export CHANGES="  •  No changes"' >> $BASH_ENV
               exit 0
             fi
 
@@ -132,6 +132,15 @@ commands:
           event: fail
           custom: |
             {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":red_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is failed"
+                  }
+                }
+              ],
               "attachments": [
                 {
                   "color": "#FC100D",
@@ -140,21 +149,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":red_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is failed"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\n:tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -166,6 +161,15 @@ commands:
           event: pass
           custom: |
             {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                  }
+                }
+              ],
               "attachments": [
                 {
                   "color": "#4BB543",
@@ -174,21 +178,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*\n:tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     },
                     {
