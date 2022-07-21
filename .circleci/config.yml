@@ -54,7 +54,13 @@ commands:
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
 
-              echo 'export CHANGES="${CHANGES}, << parameters.source-branch >>"' >> $BASH_ENV
+              if [[ -z "${CHANGES}" ]]
+              then
+                echo 'export CHANGES="- << parameters.source-branch >>"' >> $BASH_ENV
+                exit 0
+              else
+                echo 'export CHANGES="${CHANGES}\n- << parameters.source-branch >>"' >> $BASH_ENV
+              fi
             fi
   push:
     description: "Push changes"
@@ -86,8 +92,6 @@ commands:
 
             echo "🔥 Pushing to << parameters.target-branch >>"
             git push
-
-            echo "${CHANGES}"
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
@@ -119,6 +123,19 @@ commands:
 
             echo "🔥 Deploying Firebase"
             firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
+  notify-slack:
+    description: "Notify Slack"
+    steps:
+      - run:
+          command: |
+            echo 'export SLACK_SUCCESS_TEMPLATE=$(jq .pass ./slack-success-template.json)' >> $BASH_ENV
+            echo 'export SLACK_FAIL_TEMPLATE=$(jq .fail ./slack-fail-template.json)' >> $BASH_ENV
+      - slack/notify:
+          event: pass
+          template: SLACK_SUCCESS_TEMPLATE
+      - slack/notify:
+          event: fail
+          template: SLACK_FAIL_TEMPLATE
 
 jobs:
   merge-and-deploy-test1:
@@ -133,6 +150,8 @@ jobs:
           target-branch: local/test1
       - build-and-deploy:
           env: test1
+      - notify-slack
+            
   merge-and-deploy-test2:
     executor: node14
     description: "Merge test2"
@@ -148,6 +167,7 @@ jobs:
           target-branch: local/test2
       - build-and-deploy:
           env: test2
+      - notify-slack
 
 workflows:
   deploy-test1:
