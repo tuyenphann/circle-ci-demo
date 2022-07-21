@@ -110,27 +110,6 @@ commands:
       - run:
           name: Deploy to Firebase
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
-  notify-slack:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
 
 jobs:
   merge-and-deploy-test1:
