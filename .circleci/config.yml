@@ -164,35 +164,43 @@ commands:
       - slack/notify:
           event: pass
           custom: |
-            "attachments": [
-              {
-                "color": "#4BB543",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
+            {
+              "attachments": [
+                {
+                  "color": "#4BB543",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": ":large_green_circle: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": ":pages-with-curl: Changes:\n*${CHANGES}*"
+                      }
                     }
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": ":technologist: Job `$CIRCLE_JOB` is triggered by *$CIRCLE_PROJECT_USERNAME*"
-                    }
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
-                    }
-                  },
-                  
-                ]
-              }
-            ]
+                  ]
+                }
+              ]
+            }
 
 jobs:
   merge-and-deploy-test1:
