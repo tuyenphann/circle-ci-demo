@@ -21,7 +21,7 @@ function App() {
           Learn React more!!!!!!!
         </a>
         <br />
-        <div>test1 env</div>
+        <div>test2 env</div>
         <br />
         <div>projectId: {firebaseConfig.projectId}</div>
         <div>apiBaseUrl: {globalConfig.apiBaseUrl}</div>
