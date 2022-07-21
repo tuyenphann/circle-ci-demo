@@ -38,7 +38,7 @@ commands:
             
             echo "🔥 Checking out to << parameters.target-branch >>"
             git checkout << parameters.target-branch >>
-            echo 'export DEPLOYED_BRANCH="- << parameters.target-branch >>"' >> $BASH_ENV
+            echo 'export DEPLOYED_BRANCH="<< parameters.target-branch >>"' >> $BASH_ENV
 
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
@@ -189,13 +189,7 @@ commands:
                       "text": ":tanabata_tree: Deployed branch: `${DEPLOYED_BRANCH}`"
                     }
                   },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": ":pages-with-curl: Changes:\n*${CHANGES}*"
-                    }
-                  }
+                  
                 ]
               }
             ]
