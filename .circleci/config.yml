@@ -7,9 +7,9 @@ executors:
     working_directory: ~/project
 
 jobs:
-  build:
+  build-and-deploy:
     executor: node14
-    description: "Build project"
+    description: "Deploy project"
     parameters:
       env:
         type: enum
@@ -26,16 +26,6 @@ jobs:
       - run:
           name: Build project
           command: npm run build
-  deploy:
-    executor: node14
-    description: "Deploy project"
-    parameters:
-      env:
-        type: enum
-        enum: [test1, test2]
-        default: test1
-    steps:
-      - checkout
       - run:
           name: Install Firebase Tools
           command: npm install --prefix=$HOME/.local --global firebase-tools
@@ -44,34 +34,18 @@ jobs:
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
 workflows:
-  deploy-test1:
+  build-and-deploy-test1:
     jobs:
-      - build:
+      - build-and-deploy:
           env: test1
           filters:
             branches:
               only:
                 - local/test1
-      - deploy:
-          env: test1
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - local/test1
-  deploy-test2:
+  build-and-deploy-test2:
     jobs:
-      - build:
+      - build-and-deploy:
           env: test2
-          filters:
-            branches:
-              only:
-                - local/test2
-      - deploy:
-          env: test2
-          requires:
-            - build
           filters:
             branches:
               only:
