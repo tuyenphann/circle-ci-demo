@@ -45,6 +45,7 @@ commands:
               git config user.name "<< parameters.git-username >>"
               git config user.email "<< parameters.git-email >>"
               git config pull.rebase false
+              git config --global core.editor "vim"
 
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull origin << parameters.source-branch >>
