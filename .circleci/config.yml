@@ -35,10 +35,10 @@ commands:
             BASE=$(git merge-base @ "$UPSTREAM")
 
             if [ $LOCAL = $REMOTE ]; then
-              echo "Up-to-date"
+              echo "<< parameters.target-branch >> branch is up-to-date as compared with << parameters.source-branch >> branch"
               exit 0
             elif [ $REMOTE = $BASE ]; then
-              echo "Need to push to ${{<< parameters.source-branch >>}}"
+              echo "<< parameters.target-branch >> branch is ahead << parameters.source-branch >> branch"
               exit 0
             else
               echo "🔥 Configuring Git"
@@ -48,25 +48,9 @@ commands:
 
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull origin << parameters.source-branch >>
-              PULL_CMD_STATUS=$?
-
-              if [ ! $PULL_CMD_STATUS -eq 0 ]
-              then
-                echo "⛔️ Error detected while pulling from << parameters.source-branch >>. Aborting."
-                exit 1
-              fi
-              echo ""
               
               echo "🔥 Pushing to << parameters.target-branch >>"
               git push
-              PUSH_CMD_STATUS=$?
-
-              if [ ! $PUSH_CMD_STATUS -eq 0 ]
-                then
-                  echo "⛔️ Error detected while pushing to << parameters.target-branch >>. Aborting."
-                  exit 1
-                fi
-                echo ""
             fi
   build-and-deploy:
     description: "Build and deploy project"
