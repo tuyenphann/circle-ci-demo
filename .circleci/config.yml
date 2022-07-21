@@ -149,7 +149,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "Job _$CIRCLE_JOB_ is triggered by _$CIRCLE_PROJECT_USERNAME_\nDeployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job_ $CIRCLE_JOB _is triggered by_ $CIRCLE_PROJECT_USERNAME _\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -166,7 +166,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":white_check_mark: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of _$CIRCLE_PROJECT_REPONAME_ is successfully"
+                    "text": ":white_check_mark: Build <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM> of *$CIRCLE_PROJECT_REPONAME* is successfully"
                   }
                 }
               ],
