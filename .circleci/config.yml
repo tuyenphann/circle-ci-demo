@@ -116,11 +116,11 @@ jobs:
     steps:
       - checkout
       - compare-branches:
+          git-username: << parameters.git-username >>
+          git-email: << parameters.git-email >>
           target-branch: << parameters.target-branch >>
           source-branch: << parameters.source-branch >>
       - build-and-deploy:
-          git-username: << parameters.git-username >>
-          git-email: << parameters.git-email >>
           env: << parameters.env >>
 
 workflows:
