@@ -4,37 +4,36 @@ executors:
   node14:
     docker:
       - image: circleci/node:14
-    working_directory: ~/project
+    working_directory: ~/gh
 
-commands:
+jobs:
   build:
+    executor: node14
     description: "Build project"
     parameters:
       env:
         type: enum
-        enum: ["test1", "test2"]
-        default: "test1"
+        enum: [test1, test2]
+        default: test1
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: npm install
       - run:
-          name: Configure environment
+          name: Configure environment variables
           command: cp -a ./envs/<< parameters.env >>/. ./src/variables/
       - run:
-          name: List directories
-          command: ls
-      - run:
-          name: Build
+          name: Build project
           command: npm run build
   deploy:
+    executor: node14
     description: "Deploy project"
     parameters:
       env:
         type: enum
-        enum: ["test1", "test2"]
-        default: "test1"
+        enum: [test1, test2]
+        default: test1
     steps:
       - run:
           name: Install Firebase Tools
@@ -43,33 +42,31 @@ commands:
           name: Deploy to Firebase
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
-jobs:
-  build-and-deploy-test1:
-    executor: node14
-    steps:
-      - build:
-          env: "test1"
-      - deploy:
-          env: "test1"
-  build-and-deploy-test2:
-    executor: node14
-    steps:
-      - build:
-          env: "test2"
-      - deploy:
-          env: "test2"
-
 workflows:
   deploy-test1:
     jobs:
-      - build-and-deploy-test1:
+      - build:
+          env: test1
+          filters:
+            branches:
+              only:
+                - local/test1
+      - deploy:
+          env: test1
           filters:
             branches:
               only:
                 - local/test1
   deploy-test2:
     jobs:
-      - build-and-deploy-test2:
+      - build:
+          env: test2
+          filters:
+            branches:
+              only:
+                - local/test2
+      - deploy:
+          env: test2
           filters:
             branches:
               only:
