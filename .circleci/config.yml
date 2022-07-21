@@ -124,8 +124,6 @@ jobs:
           target-branch: local/test1
       - build-and-deploy:
           env: test1
-      - notify:
-          context: slack-secrets
   merge-and-deploy-test2:
     executor: node14
     description: "Merge test2"
@@ -141,8 +139,6 @@ jobs:
           target-branch: local/test2
       - build-and-deploy:
           env: test2
-      - notify:
-          context: slack-secrets
 
 workflows:
   deploy-test1:
