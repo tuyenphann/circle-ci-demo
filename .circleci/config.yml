@@ -50,6 +50,8 @@ commands:
 
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
+
+              printf "- << parameters.source-branch >>" >> changes.txt
             fi
   push:
     description: "Push changes"
@@ -67,7 +69,21 @@ commands:
     steps:
       - run:
           name: Push changes
-          command: git push origin << parameters.target-branch >>
+          command: |
+            if [ ! -s changes.txt ]; then
+              echo "🔥 No changes"
+              exit 0
+            fi
+
+            echo "🔥 Configuring Git"
+            git config user.name "<< parameters.git-username >>"
+            git config user.email "<< parameters.git-email >>"
+            git config pull.rebase false
+
+            echo "🔥 Pushing to << parameters.target-branch >>"
+            git push origin << parameters.target-branch >>
+
+            cat changes.txt
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
