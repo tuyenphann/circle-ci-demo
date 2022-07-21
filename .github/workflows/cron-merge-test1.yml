@@ -1,0 +1,74 @@
+name: CRON merge test1
+
+on:
+  workflow_dispatch:
+  schedule:
+    # At 11am and 4pm from Monday through Friday.
+    - cron: '0 11,16 * * 1-5'
+
+env:
+  GIT_USERNAME: tuyenphann
+  GIT_EMAIL: tuyenphan@kms-technology.com
+
+  REPO: https://tuyenphann:${{secrets.GITHUB_TOKEN}}@github.com/tuyenphann/circle-ci-demo.git
+  REPO_NAME: circle-ci-demo
+
+  CURRENT_BRANCH: local/test1
+  MAIN_BRANCH: main
+  TEST2_BRANCH: local/test2
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Merge multiple branches into current branch
+      run: |
+        echo "🔥 Cloning from ${{env.REPO_NAME}}"
+        git clone ${{env.REPO}} -b ${{env.CURRENT_BRANCH}}
+        CLONE_CMD_STATUS=$?
+
+        if [ ! -d "${{env.REPO_NAME}}" ]
+        then
+          echo "⛔️ Error detected while cloning ${{env.REPO_NAME}}"
+          exit 1
+        fi
+        echo ""
+
+        cd ${{env.REPO_NAME}}
+        echo "🔥 Configuring Git"
+        git config user.name "${{env.GIT_USERNAME}}"
+        git config user.email "${{env.GIT_EMAIL}}"
+        git config pull.rebase false
+
+        echo "🔥 Pulling from ${{env.MAIN_BRANCH}}"
+        git pull origin ${{env.MAIN_BRANCH}}
+        PULL_CMD_STATUS=$?
+
+        if [ ! $PULL_CMD_STATUS -eq 0 ]
+        then
+          echo "⛔️ Error detected while pulling from ${{env.MAIN_BRANCH}}. Aborting."
+          exit 1
+        fi
+        echo ""
+        
+        echo "🔥 Pulling from ${{env.TEST2_BRANCH}}"
+        git pull origin ${{env.TEST2_BRANCH}}
+        PULL_CMD_STATUS=$?
+
+        if [ ! $PULL_CMD_STATUS -eq 0 ]
+        then
+          echo "⛔️ Error detected while pulling from ${{env.TEST2_BRANCH}}. Aborting."
+          exit 1
+        fi
+        echo ""
+
+        echo "🔥 Pushing to ${{env.CURRENT_BRANCH}}"
+        git push
+        PUSH_CMD_STATUS=$?
+
+        if [ ! $PUSH_CMD_STATUS -eq 0 ]
+          then
+            echo "⛔️ Error detected while pushing to ${{env.CURRENT_BRANCH}}. Aborting."
+            exit 1
+          fi
+          echo ""

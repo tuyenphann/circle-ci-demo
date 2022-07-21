@@ -7,35 +7,84 @@ executors:
     working_directory: ~/project
 
 commands:
-  build:
-    description: "Build project"
+  compare-branches:
+    description: "Compare source branch and target branch"
+    parameters:
+      git-username:
+        type: string
+      git-email:
+        type: string
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
+    steps:
+      - run:
+          name: Update remote
+          command: git remote update
+      - run:
+          name: Compare source branch and target branch
+          command: |
+            UPSTREAM=origin/<< parameters.source-branch >>
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse "$UPSTREAM")
+            BASE=$(git merge-base @ "$UPSTREAM")
+
+            if [ $LOCAL = $REMOTE ]; then
+              echo "Up-to-date"
+              exit 0
+            elif [ $REMOTE = $BASE ]; then
+              echo "Need to push to ${{<< parameters.source-branch >>}}"
+              exit 0
+            else
+              echo "🔥 Configuring Git"
+              git config user.name "<< parameters.git-username >>"
+              git config user.email "<< parameters.git-email >>"
+              git config pull.rebase false
+
+              echo "🔥 Pulling from << parameters.source-branch >>"
+              git pull origin << parameters.source-branch >>
+              PULL_CMD_STATUS=$?
+
+              if [ ! $PULL_CMD_STATUS -eq 0 ]
+              then
+                echo "⛔️ Error detected while pulling from << parameters.source-branch >>. Aborting."
+                exit 1
+              fi
+              echo ""
+              
+              echo "🔥 Pushing to << parameters.target-branch >>"
+              git push
+              PUSH_CMD_STATUS=$?
+
+              if [ ! $PUSH_CMD_STATUS -eq 0 ]
+                then
+                  echo "⛔️ Error detected while pushing to << parameters.target-branch >>. Aborting."
+                  exit 1
+                fi
+                echo ""
+            fi
+  build-and-deploy:
+    description: "Build and deploy project"
     parameters:
       env:
         type: enum
-        enum: ["test1", "test2"]
-        default: "test1"
+        enum: [test1, test2]
+        default: test1
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: npm install
       - run:
-          name: Configure environment
+          name: Configure environment variables
           command: cp -a ./envs/<< parameters.env >>/. ./src/variables/
       - run:
-          name: List directories
-          command: ls
-      - run:
-          name: Build
+          name: Build project
           command: npm run build
-  deploy:
-    description: "Deploy project"
-    parameters:
-      env:
-        type: enum
-        enum: ["test1", "test2"]
-        default: "test1"
-    steps:
       - run:
           name: Install Firebase Tools
           command: npm install --prefix=$HOME/.local --global firebase-tools
@@ -44,32 +93,57 @@ commands:
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
 jobs:
-  build-and-deploy-test1:
+  deploy:
     executor: node14
+    description: "Deploy project"
+    parameters:
+      git-username:
+        type: string
+      git-email:
+        type: string
+      env:
+        type: enum
+        enum: [test1, test2]
+        default: test1
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
     steps:
-      - build:
-          env: "test1"
-      - deploy:
-          env: "test1"
-  build-and-deploy-test2:
-    executor: node14
-    steps:
-      - build:
-          env: "test2"
-      - deploy:
-          env: "test2"
+      - checkout
+      - compare-branches:
+          git-username: << parameters.git-username >>
+          git-email: << parameters.git-email >>
+          target-branch: << parameters.target-branch >>
+          source-branch: << parameters.source-branch >>
+      - build-and-deploy:
+          env: << parameters.env >>
 
 workflows:
   deploy-test1:
     jobs:
-      - build-and-deploy-test1:
+      - deploy:
+          git-username: tuyenphann
+          git-email: tuyenphann@kms-technology.com
+          env: test1
+          target-branch: local/test1
+          source-branch: main
           filters:
             branches:
               only:
                 - local/test1
   deploy-test2:
     jobs:
-      - build-and-deploy-test2:
+      - deploy:
+          git-username: tuyenphann
+          git-email: tuyenphann@kms-technology.com
+          env: test2
+          target-branch: local/test2
+          source-branch: main
           filters:
             branches:
               only:
