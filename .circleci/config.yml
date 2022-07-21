@@ -51,7 +51,7 @@ commands:
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
 
-              printf "- << parameters.source-branch >>" >> changes.txt
+              echo "- << parameters.source-branch >>" >> changes.txt
             fi
   push:
     description: "Push changes"
