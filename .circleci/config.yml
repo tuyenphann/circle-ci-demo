@@ -54,7 +54,7 @@ commands:
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
 
-              echo "export CHANGES=$CHANGES, parameters.source-branch" >> $BASH_ENV
+              echo 'export CHANGES="${CHANGES}, << parameters.source-branch >>"' >> $BASH_ENV
             fi
   push:
     description: "Push changes"
@@ -73,7 +73,8 @@ commands:
       - run:
           name: Push changes
           command: |
-            if [ ! -s changes.txt ]; then
+            if [[ -z "${CHANGES}" ]]
+            then
               echo "🔥 No changes"
               exit 0
             fi
@@ -86,7 +87,7 @@ commands:
             echo "🔥 Pushing to << parameters.target-branch >>"
             git push
 
-            echo "$CHANGES"
+            echo "${CHANGES}"
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
@@ -96,20 +97,28 @@ commands:
         default: test1
     steps:
       - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Configure environment variables
-          command: cp -a ./envs/<< parameters.env >>/. ./src/variables/
-      - run:
-          name: Build project
-          command: npm run build
-      - run:
-          name: Install Firebase Tools
-          command: npm install --prefix=$HOME/.local --global firebase-tools
-      - run:
-          name: Deploy to Firebase
-          command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
+          name: Build and deploy project
+          command: |
+            if [[ -z "${CHANGES}" ]]
+            then
+              echo "🔥 No changes"
+              exit 0
+            fi
+
+            echo "🔥 Installing dependencies"
+            npm install
+
+            echo "🔥 Configuring environment variables"
+            cp -a ./envs/<< parameters.env >>/. ./src/variables/
+
+            echo "🔥 Building project"
+            npm run build
+
+            echo "🔥 Installing Firebase Tools"
+            npm install --prefix=$HOME/.local --global firebase-tools
+
+            echo "🔥 Deploying Firebase"
+            firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
 jobs:
   merge-and-deploy-test1:
