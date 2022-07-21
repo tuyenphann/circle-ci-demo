@@ -19,7 +19,6 @@ commands:
         enum: [main, local/test1, local/test2]
         default: main
     steps:
-      - checkout
       - run:
           name: Update remote
           command: git remote update
@@ -43,39 +42,14 @@ commands:
             else
                 echo "Diverged"
             fi
-
-jobs:
-  merge:
-    executor: node14
-    description: "Merge code"
-    parameters:
-      target-branch:
-        type: enum
-        enum: [local/test1, local/test2]
-        default: local/test1
-      source-branch:
-        type: enum
-        enum: [main, local/test1, local/test2]
-        default: main
-    steps:
-    - checkout
-    - run:
-        name: Update remote
-        command: git remote update
-    - compare-branches:
-        target-branch: << parameters.target-branch >>
-        source-branch: << parameters.source-branch >>
-
   build-and-deploy:
-    executor: node14
-    description: "Deploy project"
+    description: "Build and deploy project"
     parameters:
       env:
         type: enum
         enum: [test1, test2]
         default: test1
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: npm install
@@ -92,28 +66,48 @@ jobs:
           name: Deploy to Firebase
           command: firebase deploy --only hosting:<< parameters.env >> --token ${FIREBASE_TOKEN}
 
+jobs:
+  deploy:
+    executor: node14
+    description: "Deploy project"
+    parameters:
+      env:
+        type: enum
+        enum: [test1, test2]
+        default: test1
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
+    steps:
+      - checkout
+      - compare-branches:
+          target-branch: << parameters.target-branch >>
+          source-branch: << parameters.source-branch >>
+      - build-and-deploy:
+          env: << parameters.env >>
+
 workflows:
-  build-and-deploy-test1:
+  deploy-test1:
     jobs:
-      - merge:
+      - deploy:
+          env: test1
           target-branch: local/test1
           source-branch: main
           filters:
             branches:
               only:
                 - local/test1
-      - build-and-deploy:
-          env: test1
-          requires:
-            - merge
-          filters:
-            branches:
-              only:
-                - local/test1
-  build-and-deploy-test2:
+  deploy-test2:
     jobs:
       - build-and-deploy:
           env: test2
+          target-branch: local/test2
+          source-branch: main
           filters:
             branches:
               only:
