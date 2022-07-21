@@ -151,7 +151,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "Job <$CIRCLE_JOB|#$CIRCLE_BUILD_NUM> is triggered by $CIRCLE_PROJECT_USERNAME \nEnvironment: *${ENV}*\nDeployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job <$CIRCLE_BUILD_URL|$CIRCLE_JOB> is triggered by $CIRCLE_PROJECT_USERNAME\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     }
                   ]
@@ -180,7 +180,7 @@ commands:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "Job <$CIRCLE_JOB|#$CIRCLE_BUILD_NUM> is triggered by $CIRCLE_PROJECT_USERNAME\nEnvironment: *${ENV}*\nDeployed branch: `${DEPLOYED_BRANCH}`"
+                        "text": "Job <$CIRCLE_BUILD_URL|$CIRCLE_JOB> is triggered by $CIRCLE_PROJECT_USERNAME\nEnvironment: *${ENV}*\nDeployed branch: `${DEPLOYED_BRANCH}`"
                       }
                     },
                     {
