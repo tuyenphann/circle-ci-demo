@@ -28,6 +28,14 @@ commands:
       - run:
           name: Compare and pull changes
           command: |
+            echo "🔥 Configuring Git"
+            git config user.name "<< parameters.git-username >>"
+            git config user.email "<< parameters.git-email >>"
+            git config pull.rebase false
+            
+            echo "🔥 Checking out to << parameters.target-branch >>"
+            git checkout << parameters.target-branch >>
+
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse "$UPSTREAM")
@@ -40,11 +48,6 @@ commands:
               echo "🔥 << parameters.target-branch >> branch is ahead of << parameters.source-branch >> branch"
               exit 0
             else
-              echo "🔥 Configuring Git"
-              git config user.name "<< parameters.git-username >>"
-              git config user.email "<< parameters.git-email >>"
-              git config pull.rebase false
-
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
 
@@ -79,8 +82,6 @@ commands:
 
             echo "🔥 Pushing to << parameters.target-branch >>"
             git push
-
-            cat changes.txt
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
