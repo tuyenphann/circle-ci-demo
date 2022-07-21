@@ -4,7 +4,7 @@ executors:
   node14:
     docker:
       - image: circleci/node:14
-    working_directory: ~/project
+    working_directory: ~/gh
 
 jobs:
   build:
@@ -53,6 +53,10 @@ workflows:
                 - local/test1
       - deploy:
           env: test1
+          filters:
+            branches:
+              only:
+                - local/test1
   deploy-test2:
     jobs:
       - build:
@@ -63,3 +67,7 @@ workflows:
                 - local/test2
       - deploy:
           env: test2
+          filters:
+            branches:
+              only:
+                - local/test2
