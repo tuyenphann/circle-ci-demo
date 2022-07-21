@@ -8,7 +8,7 @@ executors:
 
 commands:
   merge:
-    description: "Compare source branch and target branch"
+    description: "Compare and pull changes"
     parameters:
       git-username:
         type: string
@@ -29,7 +29,7 @@ commands:
           name: Update remote
           command: git remote update
       - run:
-          name: Compare source branch and target branch
+          name: Compare and pull changes
           command: |
             UPSTREAM=origin/<< parameters.source-branch >>
             LOCAL=$(git rev-parse @)
@@ -50,11 +50,24 @@ commands:
 
               echo "🔥 Pulling from << parameters.source-branch >>"
               git pull --no-edit origin << parameters.source-branch >>
-              
-              echo "🔥 Pushing to << parameters.target-branch >>"
-              git push origin << parameters.target-branch >>
             fi
-            echo ""
+  push:
+    description: "Push changes"
+    parameters:
+      git-username:
+        type: string
+        default: tuyenphann
+      git-email:
+        type: string
+        default: tuyenphan@kms-technology.com
+      target-branch:
+        type: enum
+        enum: [local/test1, local/test2]
+        default: local/test1
+    steps:
+      - run:
+          name: Push changes
+          command: git push origin << parameters.target-branch >>
   build-and-deploy:
     description: "Build and deploy project"
     parameters:
@@ -88,9 +101,8 @@ jobs:
       - merge:
           target-branch: local/test1
           source-branch: main
-      - merge:
+      - push:
           target-branch: local/test1
-          source-branch: local/test2
       - build-and-deploy:
           env: test1
   merge-and-deploy-test2:
@@ -104,6 +116,8 @@ jobs:
       - merge:
           target-branch: local/test2
           source-branch: local/test1
+      - push:
+          target-branch: local/test2
       - build-and-deploy:
           env: test2
 
