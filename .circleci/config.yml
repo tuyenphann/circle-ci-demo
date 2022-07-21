@@ -45,7 +45,12 @@ jobs:
 workflows:
   deploy-test1:
     jobs:
-      - build
+      - build:
+          env: test1
+          filters:
+            branches:
+              only:
+                - local/test1
       - deploy:
           env: test1
           requires:
@@ -56,7 +61,12 @@ workflows:
                 - local/test1
   deploy-test2:
     jobs:
-      - build
+      - build:
+          env: test2
+          filters:
+            branches:
+              only:
+                - local/test2
       - deploy:
           env: test2
           requires:
