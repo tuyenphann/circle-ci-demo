@@ -220,7 +220,7 @@ jobs:
       - checkout
       - merge:
           target-branch: local/test2
-          source-branch: main local/test1
+          source-branches: main local/test1
       - push:
           target-branch: local/test2
       - build-and-deploy:
