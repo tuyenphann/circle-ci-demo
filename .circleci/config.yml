@@ -23,8 +23,10 @@ commands:
         type: enum
         enum: [local/test1, local/test2]
         default: local/test1
-      source-branches:
-        type: string
+      source-branch:
+        type: enum
+        enum: [main, local/test1, local/test2]
+        default: main
     steps:
       - run:
           name: Compare and pull changes
@@ -33,39 +35,34 @@ commands:
             git config user.name "<< parameters.git-username >>"
             git config user.email "<< parameters.git-email >>"
             git config pull.rebase false
-
+            
             echo "🔥 Checking out to << parameters.target-branch >>"
             git checkout << parameters.target-branch >>
             echo 'export DEPLOYED_BRANCH="<< parameters.target-branch >>"' >> $BASH_ENV
 
-            source_branches=(<< parameters.source-branches >>)
-            for source_branch in "${(<< parameters.source-branches >>)[@]}"
-            do
-              UPSTREAM=origin/$source_branch
-              LOCAL=$(git rev-parse @)
-              REMOTE=$(git rev-parse "$UPSTREAM")
-              BASE=$(git merge-base @ "$UPSTREAM")
+            UPSTREAM=origin/<< parameters.source-branch >>
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse "$UPSTREAM")
+            BASE=$(git merge-base @ "$UPSTREAM")
 
-              if [ $LOCAL = $REMOTE ]; then
-                echo "🔥 << parameters.target-branch >> branch is up-to-date as compared with $source_branch branch"
-                exit 0
-              elif [ $REMOTE = $BASE ]; then
-                echo "🔥 << parameters.target-branch >> branch is ahead of $source_branch branch"
+            if [ $LOCAL = $REMOTE ]; then
+              echo "🔥 << parameters.target-branch >> branch is up-to-date as compared with << parameters.source-branch >> branch"
+              exit 0
+            elif [ $REMOTE = $BASE ]; then
+              echo "🔥 << parameters.target-branch >> branch is ahead of << parameters.source-branch >> branch"
+              exit 0
+            else
+              echo "🔥 Pulling from << parameters.source-branch >>"
+              git pull --no-edit origin << parameters.source-branch >>
+
+              if [[ -z "${CHANGES}" ]]
+              then
+                echo 'export CHANGES="    🔥   << parameters.source-branch >>"' >> $BASH_ENV
                 exit 0
               else
-                echo "🔥 Pulling from $source_branch"
-                git pull --no-edit origin $source_branch
-
-                if [[ -z "${CHANGES}" ]]
-                then
-                  echo 'export CHANGES="    🔥   $source_branch"' >> $BASH_ENV
-                  exit 0
-                else
-                  echo 'export CHANGES="${CHANGES}\n    🔥   $source_branch"' >> $BASH_ENV
-                fi
+                echo 'export CHANGES="${CHANGES}\n    🔥   << parameters.source-branch >>"' >> $BASH_ENV
               fi
-            done
-            
+            fi
   push:
     description: "Push changes"
     parameters:
@@ -206,7 +203,7 @@ jobs:
       - checkout
       - merge:
           target-branch: local/test1
-          source-branches: main
+          source-branch: main
       - push:
           target-branch: local/test1
       - build-and-deploy:
@@ -220,7 +217,10 @@ jobs:
       - checkout
       - merge:
           target-branch: local/test2
-          source-branches: main local/test1
+          source-branch: main
+      - merge:
+          target-branch: local/test2
+          source-branch: local/test1
       - push:
           target-branch: local/test2
       - build-and-deploy:
