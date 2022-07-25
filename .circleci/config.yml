@@ -13,6 +13,10 @@ commands:
   merge:
     description: "Compare and pull changes"
     parameters:
+      env:
+        type: enum
+        enum: [TEST1, TEST2]
+        default: TEST1
       git-username:
         type: string
         default: tuyenphann
@@ -35,6 +39,10 @@ commands:
             git config user.name "<< parameters.git-username >>"
             git config user.email "<< parameters.git-email >>"
             git config pull.rebase false
+
+            suffix=token
+            declare source_branches=${FIREBASE_$suffix}
+            echo ${source_branches}
             
             echo "🔥 Checking out to << parameters.target-branch >>"
             git checkout << parameters.target-branch >>
