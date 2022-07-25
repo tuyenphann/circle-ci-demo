@@ -13,10 +13,6 @@ commands:
   merge:
     description: "Compare and pull changes"
     parameters:
-      env:
-        type: enum
-        enum: [TEST1, TEST2]
-        default: TEST1
       git-username:
         type: string
         default: tuyenphann
@@ -27,10 +23,8 @@ commands:
         type: enum
         enum: [local/test1, local/test2]
         default: local/test1
-      source-branch:
-        type: enum
-        enum: [main, local/test1, local/test2]
-        default: main
+      source-branches:
+        type: string
     steps:
       - run:
           name: Compare and pull changes
@@ -44,8 +38,7 @@ commands:
             git checkout << parameters.target-branch >>
             echo 'export DEPLOYED_BRANCH="<< parameters.target-branch >>"' >> $BASH_ENV
 
-            source_branches_string="SOURCE_BRANCHES_<< parameters.env >>"
-            source_branches=(${!source_branches_string})
+            source_branches=(<< parameters.source-branches >>)
             for source_branch in "${source_branches[@]}"
             do
               UPSTREAM=origin/$source_branch
@@ -213,7 +206,7 @@ jobs:
       - checkout
       - merge:
           target-branch: local/test1
-          source-branch: main
+          source-branches: main
       - push:
           target-branch: local/test1
       - build-and-deploy:
@@ -227,10 +220,7 @@ jobs:
       - checkout
       - merge:
           target-branch: local/test2
-          source-branch: main
-      - merge:
-          target-branch: local/test2
-          source-branch: local/test1
+          source-branch: main local/test1
       - push:
           target-branch: local/test2
       - build-and-deploy:
