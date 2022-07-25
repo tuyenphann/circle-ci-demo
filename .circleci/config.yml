@@ -15,7 +15,7 @@ commands:
     parameters:
       env:
         type: enum
-        enum: [TEST1, TEST2]
+        enum: [TEST1, TEST2, TOKEN]
         default: TOKEN
       git-username:
         type: string
