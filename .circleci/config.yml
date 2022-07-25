@@ -16,7 +16,7 @@ commands:
       env:
         type: enum
         enum: [TEST1, TEST2]
-        default: TEST1
+        default: TOKEN
       git-username:
         type: string
         default: tuyenphann
@@ -40,9 +40,8 @@ commands:
             git config user.email "<< parameters.git-email >>"
             git config pull.rebase false
 
-            suffix=token
-            declare source_branches=${FIREBASE_$suffix}
-            echo ${source_branches}
+            firebase_token="FIREBASE_<< parameters.target-branch >>"
+            echo ${!firebase_token}
             
             echo "🔥 Checking out to << parameters.target-branch >>"
             git checkout << parameters.target-branch >>
