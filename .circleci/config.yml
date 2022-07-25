@@ -40,7 +40,7 @@ commands:
             git config user.email "<< parameters.git-email >>"
             git config pull.rebase false
 
-            firebase_token="FIREBASE_<< parameters.target-branch >>"
+            firebase_token="FIREBASE_<< parameters.env >>"
             echo ${!firebase_token}
             
             echo "🔥 Checking out to << parameters.target-branch >>"
