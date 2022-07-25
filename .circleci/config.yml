@@ -39,7 +39,7 @@ commands:
             echo 'export DEPLOYED_BRANCH="<< parameters.target-branch >>"' >> $BASH_ENV
 
             source_branches=(<< parameters.source-branches >>)
-            for source_branch in "${source_branches[@]}"
+            for source_branch in "${(<< parameters.source-branches >>)[@]}"
             do
               UPSTREAM=origin/$source_branch
               LOCAL=$(git rev-parse @)
